@@ -1,0 +1,45 @@
+@font-face {
+    font-family: 'Motorway';
+    src: url('../../public/fonts/MotorwayPermanent.eot');
+    src: url('../../public/fonts/MotorwayPermanent.eot?#iefix') format('embedded-opentype'),
+        url('../../public/fonts/MotorwayPermanent.woff2') format('woff2'),
+        url('../../public/fonts/MotorwayPermanent.woff') format('woff'),
+        url('../../public/fonts/MotorwayPermanent.ttf') format('truetype'),
+        url('../../public/fonts/MotorwayPermanent.svg#MotorwayPermanent') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'TransportHeavy';
+    src: url('../../public/fonts/TransportHeavy.eot');
+    src: url('../../public/fonts/TransportHeavy.eot?#iefix') format('embedded-opentype'),
+        url('../../public/fonts/TransportHeavy.woff2') format('woff2'),
+        url('../../public/fonts/TransportHeavy.woff') format('woff'),
+        url('../../public/fonts/TransportHeavy.ttf') format('truetype'),
+        url('../../public/fonts/TransportHeavy.svg#TransportHeavy') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Transport';
+    src: url('../../public/fonts/Transport.eot');
+    src: url('../../public/fonts/Transport.eot?#iefix') format('embedded-opentype'),
+        url('../../public/fonts/Transport.woff2') format('woff2'),
+        url('../../public/fonts/Transport.woff') format('woff'),
+        url('../../public/fonts/Transport.ttf') format('truetype'),
+        url('../../public/fonts/Transport.svg#Transport') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.motorway {
+    font-family: 'Motorway', sans-serif;
+}
+.a-road, .b-road {
+    font-family: 'Transport', sans-serif;
+}
+.c-road, .unclassified, .data-missing {
+    font-family: 'TransportHeavy', sans-serif;
+}
