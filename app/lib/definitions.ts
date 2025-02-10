@@ -3,10 +3,10 @@ export interface Record {
     collision_index: string;
     collision_year: string;
     collision_reference: string;
-    location_easting_osgr: string;
-    location_northing_osgr: string;
-    longitude: string;
-    latitude: string;
+    location_easting_osgr: number;
+    location_northing_osgr: number;
+    longitude: number;
+    latitude: number;
     police_force: string;
     legacy_collision_severity: string;
     number_of_vehicles: string;
