@@ -84,7 +84,7 @@ const Map = () => {
   }, [mapData]);
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading animate-pulse">Loading...</div>;
   }
 
   return <div ref={mapContainerRef} className="w-full h-full" />;
