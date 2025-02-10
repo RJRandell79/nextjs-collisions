@@ -23,6 +23,25 @@ proj4.defs([
 const osgb36 = 'EPSG:27700';
 const wgs84 = 'EPSG:4326';
 
+const getRoadClassForNumber = (num: number, route: number): string | undefined => {
+  switch (num) {
+    case 1:
+      return '<p class="motorway inline-block py-0 px-2 rounded-sm text-white">M' + route + '</p>';
+    case 2:
+      return '<p class="am-road inline-block py-0 px-2 rounded-sm text-white">A(M)' + route + '</p>';
+    case 3:
+      return '<p class="a-road inline-block py-0 px-2 rounded-sm">A' + route + '</p>';
+    case 4:
+      return '<p class="b-road inline-block py-0 px-2 rounded-sm">B' + route + '</p>';
+    case 5:
+      return '<p class="c-road inline-block py-0 px-2 rounded-sm">C' + route + '</p>';
+    case 6:
+      return '<p class="unclassified inline-block py-0 px-2 rounded-sm text-white bg-black">Unclassified</p>';
+    default:
+      return '<p class="data-missing inline-block py-0 px-2 rounded-sm text-white bg-black">Data missing or out of range</p>';
+  }
+};
+
 const Map = () => {
   const [mapData, setMapData] = useState<Record[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -70,9 +89,10 @@ const Map = () => {
 
       mapData.forEach(record => {
         if (record && isFinite(record.longitude) && isFinite(record.latitude)) {
+          console.log('Adding marker:', record);
           new mapboxgl.Marker()
             .setLngLat([record.longitude, record.latitude])
-            .setPopup(new mapboxgl.Popup().setHTML(`<h3>${record.collision_reference}</h3>`))
+            .setPopup(new mapboxgl.Popup().setHTML(`<h3>Date: ${record.date}</h3><p>Time: ${record.time}</p><p>No. of vehicles: ${record.number_of_vehicles}</p>${getRoadClassForNumber(Number(record.first_road_class), Number(record.first_road_number))}<a class="block" href="#" id="${record.collision_reference}">More info</a>`))
             .addTo(map);
         } else {
           console.warn('Skipping invalid coordinates:', record);

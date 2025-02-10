@@ -17,8 +17,8 @@ export interface Record {
     local_authority_district: string;
     local_authority_ons_district: string;
     local_authority_highway: string;
-    first_road_class: string;
-    first_road_number: string;
+    first_road_class: number;
+    first_road_number: number;
     road_type: string;
     speed_limit: string;
     junction_detail: string;
