@@ -27,8 +27,8 @@ export interface Record {
     second_road_number: string;
     pedestrian_crossing_human_control: string;
     pedestrian_crossing_physical_facilities: string;
-    light_conditions: string;
-    weather_conditions: string;
+    light_conditions: number;
+    weather_conditions: number;
     road_surface_conditions: string;
     special_conditions_at_site: string;
     carriageway_hazards: string;
@@ -48,6 +48,8 @@ export interface CollisionProperties {
     first_road_number: number;
     legacy_collision_severity: string;
     number_of_casualties: number;
+    light_conditions: number;
+    weather_conditions: number;
 };
 
 export interface SearchFormProps {
