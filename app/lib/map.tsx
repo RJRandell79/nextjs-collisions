@@ -97,7 +97,7 @@ const Map = ({ onFeatureClick, mapData, loading } : { onFeatureClick: (id: strin
               ['get', 'severity'],
               '1', '#000000', 
               '2', '#ff0000', 
-              '3', '#ffa500',
+              '3', '#ff6900',
               '#11b4da'
             ],
             'circle-radius': 8,
