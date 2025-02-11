@@ -9,7 +9,7 @@ export interface Record {
     latitude: number;
     police_force: string;
     legacy_collision_severity: string;
-    number_of_vehicles: string;
+    number_of_vehicles: number;
     number_of_casualties: string;
     date: string;
     day_of_week: string;
@@ -44,7 +44,7 @@ export interface CollisionProperties {
     date: string;
     time: string;
     number_of_vehicles: number;
-    first_road_class: string;
-    first_road_number: string;
-    severity: string;
+    first_road_class: number;
+    first_road_number: number;
+    legacy_collision_severity: string;
 };

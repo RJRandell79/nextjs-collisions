@@ -1,27 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
-import proj4 from 'proj4';
-import { fetchData } from '@/app/lib/data';
 import { Record, CollisionProperties } from '@/app/lib/definitions';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
-
-proj4.defs([
-  [
-    'EPSG:27700',
-    '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs'
-  ],
-  [
-    'EPSG:4326',
-    '+proj=longlat +datum=WGS84 +no_defs'
-  ]
-]);
-
-const osgb36 = 'EPSG:27700';
-const wgs84 = 'EPSG:4326';
 
 const getRoadClassForNumber = (num: number, route: number): string | undefined => {
   switch (num) {
@@ -42,41 +26,8 @@ const getRoadClassForNumber = (num: number, route: number): string | undefined =
   }
 };
 
-const Map = () => {
-  const [mapData, setMapData] = useState<Record[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+const Map = ({ onFeatureClick, mapData, loading } : { onFeatureClick: (id: string) => void, mapData: Record[] | null, loading: boolean }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await fetchData('app/data/sample.csv');
-        const convertedData = data.map(record => {
-          const easting = Number(record.location_easting_osgr);
-          const northing = Number(record.location_northing_osgr);
-
-          if (isNaN(easting) || isNaN(northing)) {
-            console.warn('Invalid coordinates:', record);
-            return null;
-          }
-
-          const [longitude, latitude] = proj4(osgb36, wgs84, [easting, northing]);
-
-          return {
-            ...record, longitude, latitude
-          };
-        }).filter(record => record !== null);
-
-        setMapData(convertedData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
 
   useEffect(() => {
     if (mapContainerRef.current && mapData) {
@@ -229,6 +180,11 @@ const Map = () => {
               .setLngLat(coordinates as [number, number])
               .setHTML(`${getRoadClassForNumber(Number(first_road_class), Number(first_road_number))}<p class="border-b border-grey-500">Date: ${date}</p><p>Time: ${time}</p><a class="block mt-2 py-1 px-2 rounded-sm text-white text-center bg-green-500 font-bold" href="#" id="${collision_reference}">More info</a>`)
               .addTo(map);
+
+            document.getElementById(collision_reference)?.addEventListener('click', (event) => {
+              event.preventDefault();
+              onFeatureClick(collision_reference);
+            });
           }
         });
 
