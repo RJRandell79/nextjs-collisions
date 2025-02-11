@@ -8,17 +8,20 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
-const Map = ({ onFeatureClick, mapData, loading } : { onFeatureClick: (id: string) => void, mapData: Record[] | null, loading: boolean }) => {
+const Map = ({ onFeatureClick, mapData, loading, center } : { onFeatureClick: (id: string) => void, mapData: Record[] | null, loading: boolean, center: [number, number] }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
 
   useEffect(() => {
     if (mapContainerRef.current && mapData) {
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/streets-v11',
-        center: [-0.16712, 51.54760],
+        center: center,
         zoom: 11
       });
+
+      mapRef.current = map;
 
       map.on('load', () => {
         map.addSource('collisions', {
@@ -181,6 +184,12 @@ const Map = ({ onFeatureClick, mapData, loading } : { onFeatureClick: (id: strin
       return () => map.remove();
     }
   }, [mapData]);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      mapRef.current.flyTo({center: center, essential: true});
+    }
+  }, [center]);
 
   if (loading) {
     return <div className="loading animate-pulse">Loading...</div>;

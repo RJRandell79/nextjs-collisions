@@ -49,3 +49,7 @@ export interface CollisionProperties {
     legacy_collision_severity: string;
     number_of_casualties: number;
 };
+
+export interface SearchFormProps {
+    onSearch: (location: string) => void;
+}
