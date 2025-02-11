@@ -22,3 +22,9 @@
 .c-road, .unclassified, .data-missing {
     font-family: $transport-heavy;
 }
+.mapboxgl-popup-content {
+    padding: 0.75rem !important;
+}
+.mapboxgl-popup-close-button {
+    right: 0.4rem !important;
+}

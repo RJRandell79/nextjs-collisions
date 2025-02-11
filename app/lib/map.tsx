@@ -26,19 +26,19 @@ const wgs84 = 'EPSG:4326';
 const getRoadClassForNumber = (num: number, route: number): string | undefined => {
   switch (num) {
     case 1:
-      return '<p class="motorway inline-block py-0 px-2 rounded-sm text-white">M' + route + '</p>';
+      return '<p class="motorway inline-block mb-1 py-0 px-2 rounded-sm text-white">M' + route + '</p>';
     case 2:
-      return '<p class="am-road inline-block py-0 px-2 rounded-sm text-white">A(M)' + route + '</p>';
+      return '<p class="am-road inline-block mb-1 py-0 px-2 rounded-sm text-white">A(M)' + route + '</p>';
     case 3:
-      return '<p class="a-road inline-block py-0 px-2 rounded-sm">A' + route + '</p>';
+      return '<p class="a-road inline-block mb-1 py-0 px-2 rounded-sm">A' + route + '</p>';
     case 4:
-      return '<p class="b-road inline-block py-0 px-2 rounded-sm">B' + route + '</p>';
+      return '<p class="b-road inline-block mb-1 py-0 px-2 rounded-sm">B' + route + '</p>';
     case 5:
-      return '<p class="c-road inline-block py-0 px-2 rounded-sm">C' + route + '</p>';
+      return '<p class="c-road inline-block mb-1 py-0 px-2 rounded-sm">C' + route + '</p>';
     case 6:
-      return '<p class="unclassified inline-block py-0 px-2 rounded-sm text-white bg-black">Unclassified</p>';
+      return '<p class="unclassified inline-block mb-1 py-0 px-2 rounded-sm text-white bg-black">Unclassified</p>';
     default:
-      return '<p class="data-missing inline-block py-0 px-2 rounded-sm text-white bg-black">Data missing or out of range</p>';
+      return '<p class="data-missing inline-block mb-1 py-0 px-2 rounded-sm text-white bg-black">Data missing or out of range</p>';
   }
 };
 
@@ -227,7 +227,7 @@ const Map = () => {
 
             new mapboxgl.Popup()
               .setLngLat(coordinates as [number, number])
-              .setHTML(`<h3>Date: ${date}</h3><p>Time: ${time}</p><p>No. of vehicles: ${number_of_vehicles}</p>${getRoadClassForNumber(Number(first_road_class), Number(first_road_number))}<a href="#" id="${collision_reference}">More info</a>`)
+              .setHTML(`${getRoadClassForNumber(Number(first_road_class), Number(first_road_number))}<p class="border-b border-grey-500">Date: ${date}</p><p>Time: ${time}</p><a class="block mt-2 py-1 px-2 rounded-sm text-white text-center bg-green-500 font-bold" href="#" id="${collision_reference}">More info</a>`)
               .addTo(map);
           }
         });
