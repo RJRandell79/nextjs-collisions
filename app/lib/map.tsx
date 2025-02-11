@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import proj4 from 'proj4';
 import { fetchData } from '@/app/lib/data';
-import { Record } from '@/app/lib/definitions';
+import { Record, CollisionProperties } from '@/app/lib/definitions';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
@@ -87,16 +87,149 @@ const Map = () => {
         zoom: 11
       });
 
-      mapData.forEach(record => {
-        if (record && isFinite(record.longitude) && isFinite(record.latitude)) {
-          console.log('Adding marker:', record);
-          new mapboxgl.Marker()
-            .setLngLat([record.longitude, record.latitude])
-            .setPopup(new mapboxgl.Popup().setHTML(`<h3>Date: ${record.date}</h3><p>Time: ${record.time}</p><p>No. of vehicles: ${record.number_of_vehicles}</p>${getRoadClassForNumber(Number(record.first_road_class), Number(record.first_road_number))}<a class="block" href="#" id="${record.collision_reference}">More info</a>`))
-            .addTo(map);
-        } else {
-          console.warn('Skipping invalid coordinates:', record);
-        }
+      map.on('load', () => {
+        map.addSource('collisions', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: mapData.map(record => ({
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [record.longitude, record.latitude]
+              },
+              properties: {
+                collision_reference: record.collision_reference,
+                date: record.date,
+                time: record.time,
+                number_of_vehicles: record.number_of_vehicles,
+                first_road_class: record.first_road_class,
+                first_road_number: record.first_road_number
+              }
+            }))
+          },
+          cluster: true,
+          clusterMaxZoom: 14,
+          clusterRadius: 50
+        });
+
+        map.addLayer({
+          id: 'clusters',
+          type: 'circle',
+          source: 'collisions',
+          filter: ['has', 'point_count'],
+          paint: {
+            'circle-color': [
+              'step',
+              ['get', 'point_count'],
+              '#51bbd6',
+              100,
+              '#f1f075',
+              750,
+              '#f28cb1'
+            ],
+            'circle-radius': [
+              'step',
+              ['get', 'point_count'],
+              20,
+              100,
+              30,
+              750,
+              40
+            ]
+          }
+        });
+
+        map.addLayer({
+          id: 'cluster-count',
+          type: 'symbol',
+          source: 'collisions',
+          filter: ['has', 'point_count'],
+          layout: {
+            'text-field': '{point_count_abbreviated}',
+            'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+            'text-size': 12
+          }
+        });
+
+        map.addLayer({
+          id: 'unclustered-point',
+          type: 'circle',
+          source: 'collisions',
+          filter: ['!', ['has', 'point_count']],
+          paint: {
+            'circle-color': '#11b4da',
+            'circle-radius': 8,
+            'circle-stroke-width': 1,
+            'circle-stroke-color': '#fff'
+          }
+        });
+
+        map.on('click', 'clusters', (e) => {
+          const features = map.queryRenderedFeatures(e.point, {
+            layers: ['clusters']
+          });
+
+          if (features[0]?.properties == null) {
+            console.warn('Cluster ID is null or undefined:', features[0]);
+            return;
+          }
+
+          if (!map.getSource('collisions')) {
+            console.warn('Source collisions is null or undefined');
+            return;
+          }
+
+          const clusterId = features[0].properties.cluster_id;
+          const source = map.getSource('collisions') as mapboxgl.GeoJSONSource;
+
+          source.getClusterExpansionZoom(
+            clusterId,
+            (err: Error | null | undefined, zoom: number | null | undefined) => {
+              if (err || zoom == null) return;
+
+              const geometry = features[0].geometry;
+              if (geometry.type === 'Point') {
+                const coordinates = geometry.coordinates;
+                if (Array.isArray(coordinates) && coordinates.length === 2) {
+                  map.easeTo({
+                    center: coordinates as [number, number],
+                    zoom: zoom
+                  });
+                } else {
+                  console.warn('Coordinates are not in the expected format:', coordinates);
+                }
+              } else {
+                console.warn('Geometry is not of type Point:', geometry);
+              }
+            }
+          );
+        });
+
+        map.on('click', 'unclustered-point', (e) => {
+          if(!e.features) return;
+
+          const feature = e.features[0];
+          const geometry = feature.geometry;
+
+          if(geometry.type === 'Point') {
+            const coordinates = geometry.coordinates.slice();
+            const properties = feature.properties as CollisionProperties;
+            const { collision_reference, date, time, number_of_vehicles, first_road_class, first_road_number } = properties;
+
+            new mapboxgl.Popup()
+              .setLngLat(coordinates as [number, number])
+              .setHTML(`<h3>Date: ${date}</h3><p>Time: ${time}</p><p>No. of vehicles: ${number_of_vehicles}</p>${getRoadClassForNumber(Number(first_road_class), Number(first_road_number))}<a href="#" id="${collision_reference}">More info</a>`)
+              .addTo(map);
+          }
+        });
+
+        map.on('mouseenter', 'clusters', () => {
+          map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'clusters', () => {
+          map.getCanvas().style.cursor = '';
+        });
       });
 
       return () => map.remove();

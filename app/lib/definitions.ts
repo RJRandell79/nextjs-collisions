@@ -38,3 +38,12 @@ export interface Record {
     lsoa_of_collision_location: string;
     enhanced_severity_collision: string;
 };
+
+export interface CollisionProperties {
+    collision_reference: string;
+    date: string;
+    time: string;
+    number_of_vehicles: number;
+    first_road_class: string;
+    first_road_number: string;
+};
