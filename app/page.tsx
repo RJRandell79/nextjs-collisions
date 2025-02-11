@@ -39,7 +39,7 @@ export default function Home() {
         Logo
       </div>
       <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
-        <div className="flex flex-col justify-center gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-3/12 md:px-20">
+        <div className="flex flex-col gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-3/12 md:px-20">
           <SearchForm onSearch={handleSearch} />
           <MoreInfoSection featureId={selectedFeatureId} mapData={mapData} />
         </div>

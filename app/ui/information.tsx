@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { CollisionProperties, Record } from '@/app/lib/definitions';
 import getRoadClassForNumber from '@/app/lib/roadclass';
 import getSeverity from '@/app/lib/severity';
-import { FaCalendarAlt, FaClock, FaCar, } from 'react-icons/fa';
-import { FaKitMedical } from 'react-icons/fa6';
+import { FaCalendarAlt, FaClock } from 'react-icons/fa';
+import { FaKitMedical, FaCarBurst } from 'react-icons/fa6';
 
 const MoreInfoSection = ({ featureId, mapData } : { featureId: string | null, mapData : Record[] | null }) => {
   const [feature, setFeature] = useState<CollisionProperties | null>(null);
@@ -24,7 +24,7 @@ const MoreInfoSection = ({ featureId, mapData } : { featureId: string | null, ma
 
   if (!isClient) return null;
 
-  if (!feature) return <div>No information available</div>;
+  if (!feature) return <div>Click on a marker for more information.</div>;
 
   return (
     <div className="more-info px-4 pt-4 pb-2 bg-white rounded-lg shadow-md">
@@ -45,7 +45,7 @@ const MoreInfoSection = ({ featureId, mapData } : { featureId: string | null, ma
       </div>
       <div>
         <div className="flex items-center border-t mt-2 pt-2">
-          <FaCar className="mr-2" />
+          <FaCarBurst className="mr-2" />
           <span className="flex justify-between w-full"><strong>No. of Vehicles:</strong> <span>{feature.number_of_vehicles}</span></span>
         </div>
         <div className="flex items-center border-t mt-2 pt-2">
