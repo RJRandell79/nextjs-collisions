@@ -48,6 +48,10 @@ const MoreInfoSection = ({ featureId, mapData } : { featureId: string | null, ma
           <FaCar className="mr-2" />
           <span className="flex justify-between w-full"><strong>No. of Vehicles:</strong> <span>{feature.number_of_vehicles}</span></span>
         </div>
+        <div className="flex items-center border-t mt-2 pt-2">
+          <FaKitMedical className="mr-2" />
+          <span className="flex justify-between w-full"><strong>Casualties:</strong> <span>{feature.number_of_casualties}</span></span>
+        </div>
         <div className="text-xs border-t mt-2 pt-1 text-right">
           <span>#{feature.collision_reference}</span>
         </div>
