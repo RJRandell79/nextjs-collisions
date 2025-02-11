@@ -46,4 +46,5 @@ export interface CollisionProperties {
     number_of_vehicles: number;
     first_road_class: string;
     first_road_number: string;
+    severity: string;
 };

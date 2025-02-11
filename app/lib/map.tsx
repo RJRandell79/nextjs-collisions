@@ -104,7 +104,8 @@ const Map = () => {
                 time: record.time,
                 number_of_vehicles: record.number_of_vehicles,
                 first_road_class: record.first_road_class,
-                first_road_number: record.first_road_number
+                first_road_number: record.first_road_number,
+                severity: record.legacy_collision_severity
               }
             }))
           },
@@ -158,7 +159,14 @@ const Map = () => {
           source: 'collisions',
           filter: ['!', ['has', 'point_count']],
           paint: {
-            'circle-color': '#11b4da',
+            'circle-color': [
+              'match',
+              ['get', 'severity'],
+              '1', '#000000', 
+              '2', '#ff0000', 
+              '3', '#ffa500',
+              '#11b4da'
+            ],
             'circle-radius': 8,
             'circle-stroke-width': 1,
             'circle-stroke-color': '#fff'
