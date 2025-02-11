@@ -4,20 +4,20 @@
     align-items: center;
     height: 100%;
     font-size: 1.5rem;
-    color: #333;
+    color: $dark-grey;
 }
 .motorway, .am-road {
     font-family: $motorway;
-    background-color: #0079c1; 
+    background-color: $motorway-blue;
 }
 .a-road, .b-road {
     font-family: $transport;
-    background-color: #00703c; 
-    color: #f8e027;
+    background-color: $road-green; 
+    color: $road-yellow;
 }
 .c-road {
-    background-color: #f8e027; 
-    color: #333;
+    background-color: $road-yellow;
+    color: $dark-grey;
 }
 .c-road, .unclassified, .data-missing {
     font-family: $transport-heavy;
