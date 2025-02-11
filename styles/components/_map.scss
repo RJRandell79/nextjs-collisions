@@ -7,13 +7,18 @@
     color: #333;
 }
 .motorway {
+    font-family: $motorway;
     background-color: #0079c1; 
 }
 .a-road, .b-road {
+    font-family: $transport;
     background-color: #00703c; 
     color: #f8e027;
 }
 .c-road {
     background-color: #f8e027; 
     color: #333;
+}
+.c-road, .unclassified, .data-missing {
+    font-family: $transport-heavy;
 }

@@ -34,12 +34,7 @@
     font-style: normal;
     font-display: swap;
 }
-.motorway {
-    font-family: 'Motorway', sans-serif;
-}
-.a-road, .b-road {
-    font-family: 'Transport', sans-serif;
-}
-.c-road, .unclassified, .data-missing {
-    font-family: 'TransportHeavy', sans-serif;
-}
+
+$motorway: 'Motorway', sans-serif;
+$transport: 'Transport', sans-serif;
+$transport-heavy: 'TransportHeavy', sans-serif;
