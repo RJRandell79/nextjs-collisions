@@ -7,6 +7,7 @@ import getSeverity from '@/app/lib/severity';
 import getWeatherConditions from '@/app/lib/weather';
 import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { FaKitMedical, FaCarBurst } from 'react-icons/fa6';
+import getDayNight from '../lib/daynight';
 
 const MoreInfoSection = ({ featureId, mapData } : { featureId: string | null, mapData : Record[] | null }) => {
   const [feature, setFeature] = useState<CollisionProperties | null>(null);
@@ -37,6 +38,7 @@ const MoreInfoSection = ({ featureId, mapData } : { featureId: string | null, ma
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           {getWeatherConditions(Number(feature.weather_conditions), Number(feature.light_conditions))}
+          {getDayNight(Number(feature.light_conditions))}
         </div>
       </div>
       <div className="flex items-center justify-between">
