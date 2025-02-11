@@ -1,5 +1,9 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { CollisionProperties, Record } from '@/app/lib/definitions';
+import getRoadClassForNumber from '@/app/lib/roadclass';
+import { FaCalendarAlt, FaClock, FaCar, FaRoad, FaHashtag } from 'react-icons/fa';
 
 const MoreInfoSection = ({ featureId, mapData } : { featureId: string | null, mapData : Record[] | null }) => {
   const [feature, setFeature] = useState<CollisionProperties | null>(null);
@@ -21,14 +25,30 @@ const MoreInfoSection = ({ featureId, mapData } : { featureId: string | null, ma
   if (!feature) return <div>No information available</div>;
 
   return (
-    <div className="more-info">
-      <h2>Collision Details</h2>
-      <p><strong>Date:</strong> {feature.date}</p>
-      <p><strong>Time:</strong> {feature.time}</p>
-      <p><strong>Number of Vehicles:</strong> {feature.number_of_vehicles}</p>
-      <p><strong>First Road Class:</strong> {feature.first_road_class}</p>
-      <p><strong>First Road Number:</strong> {feature.first_road_number}</p>
-      <p><strong>Collision Reference:</strong> {feature.collision_reference}</p>
+    <div className="more-info px-4 pt-4 pb-2 bg-white rounded-lg shadow-md">
+      <h2 className="text-xl font-bold mb-4">Details</h2>
+      <div className="flex items-center justify-between mb-4">
+        <div dangerouslySetInnerHTML={{ __html: getRoadClassForNumber(Number(feature.first_road_class), Number(feature.first_road_number))}}></div>
+      </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <FaCalendarAlt className="mr-2" />
+          <span>{feature.date}</span>
+        </div>
+        <div className="flex items-center">
+          <FaClock className="mr-2" />
+          <span> {feature.time}</span>
+        </div>
+      </div>
+      <div>
+        <div className="flex items-center border-t mt-2 pt-2">
+          <FaCar className="mr-2" />
+          <span className="flex justify-between"><strong>No. of Vehicles:</strong> <span>{feature.number_of_vehicles}</span></span>
+        </div>
+        <div className="text-xs border-t mt-2 pt-1 text-right">
+          <span>#{feature.collision_reference}</span>
+        </div>
+      </div>
     </div>
   );
 };
