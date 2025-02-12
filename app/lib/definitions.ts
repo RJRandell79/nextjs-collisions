@@ -39,17 +39,15 @@ export interface Record {
     enhanced_severity_collision: string;
 };
 
-export interface CollisionProperties {
+export interface CollisionMarkerProperties {
     collision_reference: string;
-    date: string;
-    time: string;
-    number_of_vehicles: number;
+    date_recorded: string;
+    time_recorded: string;
+    longitude: number;
+    latitude: number;
     first_road_class: number;
     first_road_number: number;
-    legacy_collision_severity: string;
-    number_of_casualties: number;
-    light_conditions: number;
-    weather_conditions: number;
+    legacy_collision_severity: number;
 };
 
 export interface SearchFormProps {

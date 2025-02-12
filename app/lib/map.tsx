@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { Record, CollisionProperties } from '@/app/lib/definitions';
-import getRoadClassForNumber from '@/app/lib/roadclass';
+import { CollisionMarkerProperties } from '@/app/lib/definitions';
+import { reformatDate, roadClass } from '@/app/lib/utils';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
-const Map = ({ onFeatureClick, mapData, loading, center } : { onFeatureClick: (id: string) => void, mapData: Record[] | null, loading: boolean, center: [number, number] }) => {
+const Map = ({ onFeatureClick, mapData, loading, center } : { onFeatureClick: (id: string) => void, mapData: CollisionMarkerProperties[] | null, loading: boolean, center: [number, number] }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
@@ -163,7 +163,7 @@ const Map = ({ onFeatureClick, mapData, loading, center } : { onFeatureClick: (i
 
             new mapboxgl.Popup()
               .setLngLat(coordinates as [number, number])
-              .setHTML(`${getRoadClassForNumber(Number(first_road_class), Number(first_road_number))}<p class="border-b border-grey-500">Date: ${date}</p><p>Time: ${time}</p><a class="block mt-2 py-1 px-2 rounded-sm text-white text-center bg-green-500 font-bold" href="#" id="${collision_reference}">More info</a>`)
+              .setHTML(`${roadClass(Number(first_road_class), Number(first_road_number))}<p class="border-b border-grey-500">Date: ${reformatDate(date)}</p><p>Time: ${time}</p><a class="block mt-2 py-1 px-2 rounded-sm text-white text-center bg-green-500 font-bold" href="#" id="${collision_reference}">More info</a>`)
               .addTo(map);
 
             document.getElementById(collision_reference)?.addEventListener('click', (event) => {
