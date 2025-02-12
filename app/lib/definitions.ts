@@ -11,9 +11,9 @@ export interface Record {
     legacy_collision_severity: string;
     number_of_vehicles: number;
     number_of_casualties: number;
-    date: string;
+    date_recorded: string;
     day_of_week: string;
-    time: string;
+    time_recorded: string;
     local_authority_district: string;
     local_authority_ons_district: string;
     local_authority_highway: string;

@@ -1,16 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CollisionProperties, Record } from '@/app/lib/definitions';
-import getRoadClassForNumber from '@/app/lib/roadclass';
+import { Record } from '@/app/lib/definitions';
+import { roadClass, reformatDate } from '@/app/lib/utils';
 import getSeverity from '@/app/lib/severity';
-import getWeatherConditions from '@/app/lib/weather';
 import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { FaKitMedical, FaCarBurst } from 'react-icons/fa6';
-import getDayNight from '../lib/daynight';
 
 const MoreInfoSection = ({ featureId, mapData } : { featureId: string | null, mapData : Record[] | null }) => {
-  const [feature, setFeature] = useState<CollisionProperties | null>(null);
+  const [feature, setFeature] = useState<Record | null>(null);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -19,7 +17,7 @@ const MoreInfoSection = ({ featureId, mapData } : { featureId: string | null, ma
 
   useEffect(() => {
     if (featureId && mapData) {
-        const selectedFeature = mapData.find(record => record.collision_reference === featureId) as CollisionProperties;
+        const selectedFeature = mapData.find(record => record.collision_reference === featureId) as Record;
         setFeature(selectedFeature || null);
       }
     }, [featureId, mapData]);
@@ -32,23 +30,19 @@ const MoreInfoSection = ({ featureId, mapData } : { featureId: string | null, ma
     <div className="more-info px-4 pt-4 pb-2 bg-white rounded-lg shadow-md">
       <h2 className="text-xl font-bold mb-4">Details</h2>
       <div className="flex items-center mb-3">
-        <div className="mr-1" dangerouslySetInnerHTML={{ __html: getRoadClassForNumber(Number(feature.first_road_class), Number(feature.first_road_number))}}></div>
+        <div className="mr-1" dangerouslySetInnerHTML={{ __html: roadClass(Number(feature.first_road_class), Number(feature.first_road_number))}}></div>
         <div className="mr-1" dangerouslySetInnerHTML={{ __html: getSeverity(Number(feature.legacy_collision_severity))}}></div>
       </div>
       <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          {getWeatherConditions(Number(feature.weather_conditions), Number(feature.light_conditions))}
-          {getDayNight(Number(feature.light_conditions))}
-        </div>
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <FaCalendarAlt className="mr-2" />
-          <span>{feature.date}</span>
+          <span>{reformatDate(feature.date_recorded)}</span>
         </div>
         <div className="flex items-center">
           <FaClock className="mr-2" />
-          <span> {feature.time}</span>
+          <span> {feature.time_recorded}</span>
         </div>
       </div>
       <div>
