@@ -8,12 +8,12 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
-const Map = ({ onFeatureClick, mapData, loading, center } : { onFeatureClick: (id: string) => void, mapData: CollisionMarkerProperties[] | null, loading: boolean, center: [number, number] }) => {
+export default function MapClient({ center, initialData }: { center: [number, number], initialData: CollisionMarkerProperties[] }) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
   useEffect(() => {
-    if (mapContainerRef.current && mapData) {
+    if (mapContainerRef.current && initialData.length > 0) {
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/streets-v11',
@@ -28,20 +28,19 @@ const Map = ({ onFeatureClick, mapData, loading, center } : { onFeatureClick: (i
           type: 'geojson',
           data: {
             type: 'FeatureCollection',
-            features: mapData.map(record => ({
+            features: initialData.map(record => ({
               type: 'Feature',
               geometry: {
                 type: 'Point',
-                coordinates: [record.longitude, record.latitude]
+                coordinates: [record.latitude, record.longitude]
               },
               properties: {
                 collision_reference: record.collision_reference,
-                date: record.date,
-                time: record.time,
-                number_of_vehicles: record.number_of_vehicles,
+                date_recorded: record.date_recorded,
+                time_recorded: record.time_recorded,
                 first_road_class: record.first_road_class,
                 first_road_number: record.first_road_number,
-                severity: record.legacy_collision_severity
+                legacy_collision_severity: record.legacy_collision_severity
               }
             }))
           },
@@ -97,10 +96,10 @@ const Map = ({ onFeatureClick, mapData, loading, center } : { onFeatureClick: (i
           paint: {
             'circle-color': [
               'match',
-              ['get', 'severity'],
-              '1', '#000000', 
-              '2', '#ff0000', 
-              '3', '#ff6900',
+              ['get', 'legacy_collision_severity'],
+              1, '#000000', 
+              2, '#ff0000', 
+              3, '#ff6900',
               '#11b4da'
             ],
             'circle-radius': 8,
@@ -158,17 +157,17 @@ const Map = ({ onFeatureClick, mapData, loading, center } : { onFeatureClick: (i
 
           if(geometry.type === 'Point') {
             const coordinates = geometry.coordinates.slice();
-            const properties = feature.properties as CollisionProperties;
-            const { collision_reference, date, time, number_of_vehicles, first_road_class, first_road_number } = properties;
+            const properties = feature.properties as CollisionMarkerProperties;
+            const { collision_reference, date_recorded, time_recorded, first_road_class, first_road_number } = properties;
 
             new mapboxgl.Popup()
               .setLngLat(coordinates as [number, number])
-              .setHTML(`${roadClass(Number(first_road_class), Number(first_road_number))}<p class="border-b border-grey-500">Date: ${reformatDate(date)}</p><p>Time: ${time}</p><a class="block mt-2 py-1 px-2 rounded-sm text-white text-center bg-green-500 font-bold" href="#" id="${collision_reference}">More info</a>`)
+              .setHTML(`${roadClass(Number(first_road_class), Number(first_road_number))}<p class="border-b border-grey-500">Date: ${reformatDate(date_recorded)}</p><p>Time: ${time_recorded}</p><a class="block mt-2 py-1 px-2 rounded-sm text-white text-center bg-green-500 font-bold" href="#" id="${collision_reference}">More info</a>`)
               .addTo(map);
 
             document.getElementById(collision_reference)?.addEventListener('click', (event) => {
               event.preventDefault();
-              onFeatureClick(collision_reference);
+              console.log('Clicked on:', collision_reference);
             });
           }
         });
@@ -183,7 +182,7 @@ const Map = ({ onFeatureClick, mapData, loading, center } : { onFeatureClick: (i
 
       return () => map.remove();
     }
-  }, [mapData]);
+  }, [initialData]);
 
   useEffect(() => {
     if (mapRef.current) {
@@ -191,11 +190,9 @@ const Map = ({ onFeatureClick, mapData, loading, center } : { onFeatureClick: (i
     }
   }, [center]);
 
-  if (loading) {
-    return <div className="loading animate-pulse">Loading...</div>;
+  if (initialData.length === 0) {
+    return <p className="mt-4 text-gray-400">No data available.</p>;
   }
 
   return <div ref={mapContainerRef} className="w-full h-full" />;
 };
-
-export default Map;
