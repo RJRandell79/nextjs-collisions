@@ -35,6 +35,53 @@ export async function countAllCollisions() {
     }
 }
 
+export async function fetchCollisionsByLighting() {
+    try {
+        const totalCollisions = await countAllCollisions();
+        const data = await sql<{ light_conditions: number, count: number }[]>`
+            SELECT light_conditions, COUNT(*) AS count
+            FROM collisions
+            WHERE light_conditions IN (1, 4, 5, 6, 7)
+            GROUP BY light_conditions
+        `;
+        const result = data.map(row => {
+            let label = 'Unknown Lighting';
+            let colour = 'bg-black';
+            switch (row.light_conditions) {
+                case 1:
+                    label = 'Daylight';
+                    colour = 'bg-blue-500';
+                    break;
+                case 4:
+                    label = 'Darkness - lights lit';
+                    colour = 'bg-yellow-500';
+                    break;
+                case 5:
+                    label = 'Darkness - lights unlit';
+                    colour = 'bg-gray-500';
+                    break;
+                case 6:
+                    label = 'Darkness - no lighting';
+                    colour = 'bg-black';
+                    break;
+                case 7:
+                    label = 'Darkness - lighting unknown';
+                    colour = 'bg-orange-500';
+                    break;
+                default:
+                    label = 'Data missing or out of range';
+                    colour = 'bg-red-500';
+            }
+            return { title: label, percentage: Number(row.count) / totalCollisions * 100, value: row.count.toString(), color: colour };
+        });
+        return result;
+    }
+    catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch data.');
+    }
+}
+
 export async function fetchCollisionsByRoadClass() {
     try {
         const totalCollisions = await countAllCollisions();

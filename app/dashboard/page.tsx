@@ -3,6 +3,7 @@ import { SeverityChart } from '../ui/dashboard/severity-chart';
 import { RoadClassChart } from '../ui/dashboard/roadclass-chart';
 import { MapSkeleton } from '../ui/skeletons';
 import { Suspense } from 'react';
+import { RoadLightingChart } from '../ui/dashboard/lighting-chart';
 
 export default function Dashboard() {
   return (
@@ -64,7 +65,11 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <div className="flex flex-col justify-between">
-                  
+                  <div className="h-[310px] w-full">
+                    <Suspense fallback={<MapSkeleton />}>
+                      <RoadLightingChart />
+                    </Suspense>
+                  </div>
                 </div>
               </div>
             </section>
