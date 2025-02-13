@@ -1,16 +1,18 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { CollisionMarkerProperties } from '@/app/lib/definitions';
-import { reformatDate, roadClass } from '@/app/lib/utils';
+import MoreInfoSection from '@/app/components/information';
+import { Record } from '@/app/lib/definitions';
+import { reformatDateWithSuffix, roadClass } from '@/app/lib/utils';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
-export default function MapClient({ center, initialData }: { center: [number, number], initialData: CollisionMarkerProperties[] }) {
+export default function MapClient({ center, initialData }: { center: [number, number], initialData: Record[] }) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Record | null>(null);
 
   useEffect(() => {
     if (mapContainerRef.current && initialData.length > 0) {
@@ -36,7 +38,7 @@ export default function MapClient({ center, initialData }: { center: [number, nu
               },
               properties: {
                 collision_reference: record.collision_reference,
-                date_recorded: record.date_recorded,
+                date_recorded: reformatDateWithSuffix(record.date_recorded.toString().substring(0, 15)),
                 time_recorded: record.time_recorded,
                 first_road_class: record.first_road_class,
                 first_road_number: record.first_road_number,
@@ -157,17 +159,21 @@ export default function MapClient({ center, initialData }: { center: [number, nu
 
           if(geometry.type === 'Point') {
             const coordinates = geometry.coordinates.slice();
-            const properties = feature.properties as CollisionMarkerProperties;
+            const properties = feature.properties as Record;
             const { collision_reference, date_recorded, time_recorded, first_road_class, first_road_number } = properties;
 
             new mapboxgl.Popup()
               .setLngLat(coordinates as [number, number])
-              .setHTML(`${roadClass(Number(first_road_class), Number(first_road_number))}<p class="border-b border-grey-500">Date: ${reformatDate(date_recorded)}</p><p>Time: ${time_recorded}</p><a class="block mt-2 py-1 px-2 rounded-sm text-white text-center bg-green-500 font-bold" href="#" id="${collision_reference}">More info</a>`)
+              .setHTML(`${roadClass(Number(first_road_class), Number(first_road_number))}<p class="border-b border-grey-500">Date: ${date_recorded}</p><p>Time: ${time_recorded}</p><a class="block mt-2 py-1 px-2 rounded-sm text-white text-center bg-green-500 font-bold" href="#" id="${collision_reference}">More info</a>`)
               .addTo(map);
 
             document.getElementById(collision_reference)?.addEventListener('click', (event) => {
               event.preventDefault();
-              console.log('Clicked on:', collision_reference);
+              const selectedFeature = initialData.find(record => record.collision_reference === collision_reference) as Record;
+              setSelectedLocation({
+                ...selectedFeature,
+                date_recorded: reformatDateWithSuffix(selectedFeature.date_recorded.toString().substring(0, 15))
+              });
             });
           }
         });
@@ -194,5 +200,12 @@ export default function MapClient({ center, initialData }: { center: [number, nu
     return <p className="mt-4 text-gray-400">No data available.</p>;
   }
 
-  return <div ref={mapContainerRef} className="w-full h-full" />;
+  return <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
+          <div className="flex flex-col gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-3/12 md:px-20">
+            <MoreInfoSection collisionDetails={selectedLocation} />
+          </div>
+          <div className="flex items-stretch justify-center p-0 md:w-9/12 rounded-lg overflow-hidden">
+            <div ref={mapContainerRef} className="w-full h-full" />;
+          </div>
+        </div>
 };

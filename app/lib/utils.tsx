@@ -1,27 +1,20 @@
-function getOrdinalSuffix(day: number): string {
-    if (day > 3 && day < 21) return 'th'; // Special case for 11th to 13th
-    switch (day % 10) {
-        case 1: return 'st';
-        case 2: return 'nd';
-        case 3: return 'rd';
-        default: return 'th';
-    }
-}
+export function reformatDateWithSuffix(dateString: string): string {
+  const date = new Date(dateString);
+  const day = date.toLocaleString('en-US', { weekday: 'long' });
+  const month = date.toLocaleString('en-US', { month: 'long' });
+  const year = date.getFullYear();
+  const dateNumber = date.getDate();
 
-function getMonthName(month: number): string {
-    const monthNames = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-    return monthNames[month - 1];
-}
+  let suffix = 'th';
+  if (dateNumber === 1 || dateNumber === 21 || dateNumber === 31) {
+    suffix = 'st';
+  } else if (dateNumber === 2 || dateNumber === 22) {
+    suffix = 'nd';
+  } else if (dateNumber === 3 || dateNumber === 23) {
+    suffix = 'rd';
+  }
 
-export function reformatDate(dateTimeString: string): string {
-    const dateString = dateTimeString.split('T')[0];
-    const [year, month, day] = dateString.split('-').map(Number);
-    const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`;
-    const monthName = getMonthName(month);
-    return `${dayWithSuffix} ${monthName} ${year}`;
+  return `${day} ${dateNumber}${suffix} ${month} ${year}`;
 }
 
 export function roadClass(num: number, route: number): string {
