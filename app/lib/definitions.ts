@@ -53,3 +53,24 @@ export interface CollisionMarkerProperties {
 export interface SearchFormProps {
     onSearch: (location: string) => void;
 }
+
+export type KpiEntry = {
+    title: string
+    percentage: number
+    current: number
+    allowed: number
+    unit?: string
+}
+
+
+export type KpiEntryExtended = Omit<
+  KpiEntry,
+  "current" | "allowed" | "unit"
+> & {
+  value: string
+  color: string
+}
+
+export interface SeverityProperties {
+    legacy_collision_severity: number;
+}
