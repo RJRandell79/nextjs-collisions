@@ -35,6 +35,57 @@ export async function countAllCollisions() {
     }
 }
 
+export async function fetchCollisionsByRoadClass() {
+    try {
+        const totalCollisions = await countAllCollisions();
+        const data = await sql<{ first_road_class: number, count: number }[]>`
+            SELECT first_road_class, COUNT(*) AS count
+            FROM collisions
+            WHERE first_road_class IN (1, 2, 3, 4, 5, 6)
+            GROUP BY first_road_class
+            ORDER BY first_road_class
+        `;
+        const result = data.map(row => {
+            let label = 'Data missing or out of range';
+            let colour = 'bg-black';
+            switch (row.first_road_class) {
+                case 1:
+                    label = 'Motorway';
+                    colour = 'bg-[#0079c1]';
+                    break;
+                case 2:
+                    label = 'A(M)';
+                    colour = 'bg-[#0079c1]';
+                    break;
+                case 3:
+                    label = 'A';
+                    colour = 'bg-[#00703c]';
+                    break;
+                case 4:
+                    label = 'B';
+                    colour = 'bg-[#00703c]';
+                    break;
+                case 5:
+                    label = 'C';
+                    colour = 'bg-[#f8e027]';
+                    break;
+                case 6:
+                    label = 'Unclassified';
+                    colour = 'bg-[#333333]';
+                    break;
+                default:
+                    label = 'Data missing or out of range';
+                    colour = 'bg-black';
+            }
+            return { title: label, percentage: Number(row.count) / totalCollisions * 100, value: row.count.toString(), color: colour };
+        });
+        return result;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch data.');
+    }
+}
+
 export async function fetchSeverity() {
     try {
         const totalCollisions = await countAllCollisions();

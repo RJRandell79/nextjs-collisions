@@ -1,29 +1,8 @@
 import Link from 'next/link';
-import { KpiEntryExtended } from '../lib/definitions';
 import { SeverityChart } from '../ui/dashboard/severity-chart';
+import { RoadClassChart } from '../ui/dashboard/roadclass-chart';
 import { MapSkeleton } from '../ui/skeletons';
 import { Suspense } from 'react';
-
-const data3: KpiEntryExtended[] = [
-    {
-      title: "Base tier",
-      percentage: 68.1,
-      value: "$200",
-      color: "bg-indigo-600 dark:bg-indigo-500",
-    },
-    {
-      title: "On-demand charges",
-      percentage: 20.8,
-      value: "$61.1",
-      color: "bg-purple-600 dark:bg-purple-500",
-    },
-    {
-      title: "Caching",
-      percentage: 11.1,
-      value: "$31.9",
-      color: "bg-gray-400 dark:bg-gray-600",
-    },
-]
 
 export default function Dashboard() {
   return (
@@ -71,14 +50,18 @@ export default function Dashboard() {
               <h1 id="current-billing-cycle" className="scroll-mt-10 text-lg font-semibold text-gray-900 sm:text-xl dark:text-gray-50">Statistics</h1>
               <div className="mt-4 grid grid-cols-1 gap-14 sm:mt-8 sm:grid-cols-2 lg:mt-10 xl:grid-cols-3">
                 <div className="flex flex-col justify-between">
-                  <div className="h-[230px] w-full">
+                  <div className="h-[310px] w-full">
                     <Suspense fallback={<MapSkeleton />}>
                       <SeverityChart />
                     </Suspense>
                   </div>
                 </div>
                 <div className="flex flex-col justify-between">
-                  
+                  <div className="h-[310px] w-full">
+                    <Suspense fallback={<MapSkeleton />}>
+                      <RoadClassChart />
+                    </Suspense>
+                  </div>
                 </div>
                 <div className="flex flex-col justify-between">
                   
