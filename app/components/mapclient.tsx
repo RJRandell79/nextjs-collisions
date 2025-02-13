@@ -3,23 +3,41 @@
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import MoreInfoSection from '@/app/components/information';
+import SearchForm from '@/app/components/searchform';
 import { Record } from '@/app/lib/definitions';
 import { reformatDateWithSuffix, roadClass } from '@/app/lib/utils';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
-export default function MapClient({ center, initialData }: { center: [number, number], initialData: Record[] }) {
+export default function MapClient({ initialData }: { initialData: Record[] }) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
+  const [mapCenter, setMapCenter] = useState<[number, number]>([-0.16712, 51.54760]);
   const [selectedLocation, setSelectedLocation] = useState<Record | null>(null);
+
+  const handleSearch = async (location: string) => {
+    try {
+      const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`);
+      const data = await response.json();
+      if (data.features && data.features.length > 0) {
+        const [longitude, latitude] = data.features[0].center;
+        setMapCenter([longitude, latitude]);
+      } else {
+        alert('Location not found');
+      }
+    } catch (error) {
+      console.error('Error fetching location:', error);
+      alert('Error fetching location');
+    }
+  };
 
   useEffect(() => {
     if (mapContainerRef.current && initialData.length > 0) {
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/streets-v11',
-        center: center,
+        center: mapCenter,
         zoom: 11
       });
 
@@ -192,9 +210,9 @@ export default function MapClient({ center, initialData }: { center: [number, nu
 
   useEffect(() => {
     if (mapRef.current) {
-      mapRef.current.flyTo({center: center, essential: true});
+      mapRef.current.flyTo({center: mapCenter, essential: true});
     }
-  }, [center]);
+  }, [mapCenter]);
 
   if (initialData.length === 0) {
     return <p className="mt-4 text-gray-400">No data available.</p>;
@@ -202,6 +220,7 @@ export default function MapClient({ center, initialData }: { center: [number, nu
 
   return <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
           <div className="flex flex-col gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-3/12 md:px-20">
+            <SearchForm onSearch={handleSearch} />
             <MoreInfoSection collisionDetails={selectedLocation} />
           </div>
           <div className="flex items-stretch justify-center p-0 md:w-9/12 rounded-lg overflow-hidden">
