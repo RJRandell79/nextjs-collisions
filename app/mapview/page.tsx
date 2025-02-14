@@ -13,7 +13,7 @@ export default function Home() {
         </ul>
       </div>
       <Suspense fallback={<div className="w-full h-full mt-4 relative overflow-hidden rounded-xl bg-gray-100 p-2 shadow-sm">Loading...</div>}>
-        <MapServer center={[-0.16712, 51.54760]} />
+        <MapServer />
       </Suspense>
     </main>
   );
