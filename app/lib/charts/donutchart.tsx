@@ -17,7 +17,7 @@ import {
   AvailableChartColorsKeys,
   constructCategoryColors,
   getColorClassName,
-} from "@/app/lib/charts/chartutils"
+} from "@/app/lib/chartutils"
 import { cx } from "@/app/lib/utils"
 
 const sumNumericArray = (arr: number[]): number =>
