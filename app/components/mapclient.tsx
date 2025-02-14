@@ -206,7 +206,7 @@ export default function MapClient({ initialData }: { initialData: Record[] }) {
 
       return () => map.remove();
     }
-  }, [initialData]);
+  }, [initialData, mapCenter]);
 
   useEffect(() => {
     if (mapRef.current) {

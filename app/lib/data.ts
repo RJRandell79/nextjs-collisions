@@ -1,6 +1,6 @@
 'use server';
 
-import { Record, SeverityProperties } from './definitions';
+import { Record } from './definitions';
 import postgres from 'postgres';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
