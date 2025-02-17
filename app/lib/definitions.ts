@@ -84,3 +84,11 @@ export type SeverityTimeEntry = {
     time: string;
     [key: string]: number | string | undefined;
 }
+
+export type CollisionsByRouteEntry = {
+    first_road_class: number;
+    first_road_number: number;
+    police_force: string;
+    local_authority_ons_district: string;
+    count: number;
+}

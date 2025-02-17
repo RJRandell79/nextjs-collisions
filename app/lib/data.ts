@@ -1,6 +1,6 @@
 'use server';
 
-import { Record, SeverityDateEntry, SeverityTimeEntry } from './definitions';
+import { Record, SeverityDateEntry, SeverityTimeEntry, CollisionsByRouteEntry } from './definitions';
 import { format } from 'date-fns';
 import postgres from 'postgres';
 
@@ -37,6 +37,40 @@ export async function countAllCollisions() {
         const data = await sql<{ count: number }[]>`SELECT COUNT(*) FROM collisions`;
         return data[0].count;
     } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch data.');
+    }
+}
+
+export async function fetchCollisionsByRoute() {
+    try {
+        const data = await sql<CollisionsByRouteEntry[]>`
+            WITH collision_data AS (
+                SELECT 
+                    c.first_road_class, 
+                    c.first_road_number, 
+                    c.police_force, 
+                    c.local_authority_ons_district,
+                    COUNT(*) AS count
+                FROM collisions c
+                WHERE c.first_road_class IN (1, 2, 3, 4, 5) 
+                  AND (c.first_road_number IS NOT NULL AND c.first_road_number != 0)
+                GROUP BY c.first_road_class, c.first_road_number, c.police_force, c.local_authority_ons_district
+            )
+            SELECT 
+                cd.first_road_class, 
+                cd.first_road_number, 
+                pf.police_force AS police_force, 
+                od.area AS local_authority_ons_district, 
+                cd.count
+            FROM collision_data cd
+            JOIN police_forces pf ON cd.police_force = pf.code
+            JOIN ons_districts od ON cd.local_authority_ons_district = od.code
+            ORDER BY cd.count DESC
+        `;
+        return data;
+    }
+    catch (error) {
         console.error('Database Error:', error);
         throw new Error('Failed to fetch data.');
     }

@@ -61,6 +61,33 @@ export function formatNumber(number: number, min: number, max: number): string {
   }).format(number);
 }
 
+export function roadClassPrefixNo(num: number, route: number): string {
+  let str = 'Data missing or out of range';
+  switch (num) {
+    case 1:
+      str = 'M' + route;
+      break;
+    case 2:
+      str = 'A(M)' + route;
+      break;
+    case 3:
+      str = 'A' + route;
+      break;
+    case 4:
+      str = 'B' + route;
+      break;
+    case 5:
+      str = 'C' + route;
+      break;
+    case 6:
+      str = 'Unclassified';
+      break;
+    default:
+      str = 'Data missing or out of range';
+  }
+  return str;
+}
+
 export function roadClassHTML(num: number, route: number): string {
     let html = '<p class="data-missing inline-block py-0 px-2 rounded-sm text-white bg-black">Data missing or out of range</p>';
     switch (num) {
