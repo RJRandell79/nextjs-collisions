@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { fetchCollisionsByTime } from "@/app/lib/data";
-import { AreaChart } from "@/app/lib/charts/areachart";
 import { BarChart } from "@/app/lib/charts/barchart";
 import { MapSkeleton } from "../skeletons";
 
-export const CollisionsOverTimeChart = () => {
+export const CollisionsByMonthChart = () => {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<{ date: string, Fatal: number, Serious: number, Slight: number, }[]>([]);
     

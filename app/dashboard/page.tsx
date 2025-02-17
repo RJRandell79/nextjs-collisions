@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { SeverityChart } from '../ui/dashboard/severity-chart';
 import { RoadClassChart } from '../ui/dashboard/roadclass-chart';
 import { RoadLightingChart } from '../ui/dashboard/lighting-chart';
+import { CollisionsByMonthChart } from '../ui/dashboard/collisions-month-chart';
 import { DateRangePickerYearNavigation } from '../ui/dashboard/date-range-picker';
 import { MapSkeleton } from '../ui/skeletons';
 import { Suspense } from 'react';
@@ -78,6 +79,11 @@ export default function Dashboard() {
               <h1 id="usage-overview" className="mt-16 scroll-mt-8 text-lg font-semibold text-gray-900 sm:text-xl dark:text-gray-50">Overview</h1>
               <div className="sticky top-16 z-20 flex items-center justify-between border-b border-gray-200 bg-white pb-4 pt-4 sm:pt-6 lg:top-0 lg:mx-0 lg:px-0 lg:pt-8 dark:border-gray-800 dark:bg-gray-950">
                 <DateRangePickerYearNavigation />
+              </div>
+              <div className="mt-10 grid grid-cols-2 gap-14">
+                <Suspense fallback={<MapSkeleton />}>
+                  <CollisionsByMonthChart />
+                </Suspense>
               </div>
             </section>
           </div>
