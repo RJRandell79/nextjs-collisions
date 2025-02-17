@@ -9,6 +9,8 @@ export default function Home() {
       <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4">
         <ul>
             <li><Link href="/">Home</Link></li>
+            <li><Link href="/dashboard">Dashboard</Link></li>
+            <li><Link href="/route">By Route</Link></li>
             <li><strong>Map View</strong></li>
         </ul>
       </div>

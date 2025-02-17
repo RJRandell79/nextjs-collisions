@@ -10,6 +10,7 @@ export default function Home() {
         <ul>
           <li><Link href="/mapview">Map View</Link></li>
           <li><Link href="/dashboard">Dashboard</Link></li>
+          <li><Link href="/route">By Route</Link></li>
         </ul>
       </div>
       <div className="mt-4 flex grow flex-col gap-4 md:flex-row">

@@ -16,7 +16,9 @@ export default function Dashboard() {
           <nav className="flex flex-1 flex-col space-y-10" aria-label="core navigation">
             <ul role="list" className="space-y-0.5">
               <li><Link href="/">Home</Link></li>
+              <li><Link href="/mapview">Map</Link></li>
               <li><strong>Dashboard</strong></li>
+              <li><Link href="/route">By Route</Link></li>
             </ul>
           </nav>
         </aside>
