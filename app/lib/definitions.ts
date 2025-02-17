@@ -74,3 +74,8 @@ export type KpiEntryExtended = Omit<
 export interface SeverityProperties {
     legacy_collision_severity: number;
 }
+
+export type SeverityEntry = {
+    date: string;
+    [key: string]: number | string | undefined;
+}

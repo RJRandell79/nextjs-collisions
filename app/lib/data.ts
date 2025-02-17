@@ -1,9 +1,15 @@
 'use server';
 
-import { Record } from './definitions';
+import { Record, SeverityEntry } from './definitions';
 import postgres from 'postgres';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+
+const severityMapping: { [key: number]: string } = {
+    1: 'Fatal',
+    2: 'Serious',
+    3: 'Slight',
+};
 
 export async function fetchCollisions() {
     try {
@@ -30,6 +36,40 @@ export async function countAllCollisions() {
         const data = await sql<{ count: number }[]>`SELECT COUNT(*) FROM collisions`;
         return data[0].count;
     } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch data.');
+    }
+}
+
+export async function fetchCollisionsByTime() {
+    try {
+        const data = await sql<{ date: string, severity: number, count: number }[]>`
+            SELECT DATE_TRUNC('month', date_recorded)::date AS date, legacy_collision_severity AS severity, COUNT(*) AS count
+            FROM collisions
+            GROUP BY date, severity
+            ORDER BY date, severity
+        `;
+        const reshapedData = data.reduce((acc, row) => {
+            const formattedDate = format(new Date(row.date), 'MMM yy');
+            const existingEntry = acc.find(entry => entry.date === formattedDate);
+            
+            const severityName = severityMapping[row.severity];
+
+            if (existingEntry) {
+                existingEntry[severityName] = Number(row.count);
+            } else {
+                acc.push({
+                date: formattedDate,
+                [severityName]: Number(row.count),
+                } as SeverityEntry);
+            }
+            
+            return acc;
+        }, [] as SeverityEntry[]);
+        
+        return reshapedData;
+    }
+    catch (error) {
         console.error('Database Error:', error);
         throw new Error('Failed to fetch data.');
     }
