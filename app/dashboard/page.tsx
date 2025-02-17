@@ -3,6 +3,7 @@ import { SeverityChart } from '../ui/dashboard/severity-chart';
 import { RoadClassChart } from '../ui/dashboard/roadclass-chart';
 import { RoadLightingChart } from '../ui/dashboard/lighting-chart';
 import { CollisionsByMonthChart } from '../ui/dashboard/collisions-month-chart';
+import { CollisionsByTimeChart } from '../ui/dashboard/collisions-time-chart';
 import { DateRangePickerYearNavigation } from '../ui/dashboard/date-range-picker';
 import { MapSkeleton } from '../ui/skeletons';
 import { Suspense } from 'react';
@@ -83,6 +84,9 @@ export default function Dashboard() {
               <div className="mt-10 grid grid-cols-2 gap-14">
                 <Suspense fallback={<MapSkeleton />}>
                   <CollisionsByMonthChart />
+                </Suspense>
+                <Suspense fallback={<MapSkeleton />}>
+                  <CollisionsByTimeChart />
                 </Suspense>
               </div>
             </section>

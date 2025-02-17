@@ -75,7 +75,12 @@ export interface SeverityProperties {
     legacy_collision_severity: number;
 }
 
-export type SeverityEntry = {
+export type SeverityDateEntry = {
     date: string;
+    [key: string]: number | string | undefined;
+}
+
+export type SeverityTimeEntry = {
+    time: string;
     [key: string]: number | string | undefined;
 }

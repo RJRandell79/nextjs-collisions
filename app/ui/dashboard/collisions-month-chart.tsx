@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { fetchCollisionsByTime } from "@/app/lib/data";
+import { fetchCollisionsByMonth } from "@/app/lib/data";
 import { BarChart } from "@/app/lib/charts/barchart";
 import { MapSkeleton } from "../skeletons";
 
@@ -12,7 +12,7 @@ export const CollisionsByMonthChart = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-            const response = await fetchCollisionsByTime();
+            const response = await fetchCollisionsByMonth();
             console.log(response);
             setData(response as { date: string; Fatal: number; Serious: number; Slight: number; }[]);
             } catch (error) {
@@ -29,6 +29,8 @@ export const CollisionsByMonthChart = () => {
     }
 
     return (
+        <div>
+        <h3 className="font-bold text-gray-900 sm:text-sm dark:text-gray-50">Total collisions by month</h3>
         <BarChart
             type={"stacked"}
             className="h-80"
@@ -43,5 +45,6 @@ export const CollisionsByMonthChart = () => {
             xAxisLabel="Date"
             yAxisLabel="Number of collisions"
         />
+        </div>
     )
 }

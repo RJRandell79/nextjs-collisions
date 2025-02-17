@@ -1,6 +1,6 @@
 'use server';
 
-import { Record, SeverityEntry } from './definitions';
+import { Record, SeverityDateEntry, SeverityTimeEntry } from './definitions';
 import { format } from 'date-fns';
 import postgres from 'postgres';
 
@@ -44,6 +44,42 @@ export async function countAllCollisions() {
 
 export async function fetchCollisionsByTime() {
     try {
+        const data = await sql<{ time: string, severity: number, count: number }[]>`
+            SELECT DATE_TRUNC('hour', to_timestamp(time_recorded, 'HH24:MI')::time) AS time, legacy_collision_severity AS severity, COUNT(*) AS count
+            FROM collisions
+            GROUP BY DATE_TRUNC('hour', to_timestamp(time_recorded, 'HH24:MI')::time), severity
+            ORDER BY time, severity
+        `;
+        const reshapedData = data.reduce((acc, row) => {
+            if (!row.time) {
+                console.error('Invalid time value:', row.time);
+                return acc;
+            }
+
+            const existingEntry = acc.find(entry => entry.time === row.time);
+            const severityName = severityMapping[row.severity];
+            
+            if (existingEntry) {
+                existingEntry[severityName] = Number(row.count);
+            } else {
+                acc.push({
+                    time: row.time,
+                    [severityName]: Number(row.count),
+                } as SeverityTimeEntry);
+            }
+            return acc;
+        }, [] as SeverityTimeEntry[]);
+
+        return reshapedData;
+    }
+    catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch data.');
+    }
+}
+
+export async function fetchCollisionsByMonth() {
+    try {
         const data = await sql<{ date: string, severity: number, count: number }[]>`
             SELECT DATE_TRUNC('month', date_recorded)::date AS date, legacy_collision_severity AS severity, COUNT(*) AS count
             FROM collisions
@@ -62,11 +98,11 @@ export async function fetchCollisionsByTime() {
                 acc.push({
                 date: formattedDate,
                 [severityName]: Number(row.count),
-                } as SeverityEntry);
+                } as SeverityDateEntry);
             }
             
             return acc;
-        }, [] as SeverityEntry[]);
+        }, [] as SeverityDateEntry[]);
         
         return reshapedData;
     }
