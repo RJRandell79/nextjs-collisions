@@ -5,7 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import MoreInfoSection from '@/app/components/information';
 import SearchForm from '@/app/components/searchform';
 import { Record } from '@/app/lib/definitions';
-import { reformatDateWithSuffix, roadClass } from '@/app/lib/utils';
+import { reformatDateWithSuffix, roadClassHTML } from '@/app/lib/utils';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
@@ -182,7 +182,7 @@ export default function MapClient({ initialData }: { initialData: Record[] }) {
 
             new mapboxgl.Popup()
               .setLngLat(coordinates as [number, number])
-              .setHTML(`${roadClass(Number(first_road_class), Number(first_road_number))}<p class="border-b border-grey-500">Date: ${date_recorded}</p><p>Time: ${time_recorded}</p><a class="block mt-2 py-1 px-2 rounded-sm text-white text-center bg-green-500 font-bold" href="#" id="${collision_reference}">More info</a>`)
+              .setHTML(`${roadClassHTML(Number(first_road_class), Number(first_road_number))}<p class="border-b border-grey-500">Date: ${date_recorded}</p><p>Time: ${time_recorded}</p><a class="block mt-2 py-1 px-2 rounded-sm text-white text-center bg-green-500 font-bold" href="#" id="${collision_reference}">More info</a>`)
               .addTo(map);
 
             document.getElementById(collision_reference)?.addEventListener('click', (event) => {

@@ -61,21 +61,29 @@ export function formatNumber(number: number, min: number, max: number): string {
   }).format(number);
 }
 
-export function roadClass(num: number, route: number): string {
+export function roadClassHTML(num: number, route: number): string {
+    let html = '<p class="data-missing inline-block py-0 px-2 rounded-sm text-white bg-black">Data missing or out of range</p>';
     switch (num) {
       case 1:
-        return '<p class="motorway inline-block py-0 px-2 rounded-sm text-white">M' + route + '</p>';
+        html = '<p class="motorway inline-block py-0 px-2 rounded-sm text-white">M' + route + '</p>';
+        break;
       case 2:
-        return '<p class="am-road inline-block py-0 px-2 rounded-sm text-white">A(M)' + route + '</p>';
+        html = '<p class="am-road inline-block py-0 px-2 rounded-sm text-white">A(M)' + route + '</p>';
+        break;
       case 3:
-        return '<p class="a-road inline-block py-0 px-2 rounded-sm">A' + route + '</p>';
+        html = '<p class="a-road inline-block py-0 px-2 rounded-sm">A' + route + '</p>';
+        break;
       case 4:
-        return '<p class="b-road inline-block py-0 px-2 rounded-sm">B' + route + '</p>';
+        html = '<p class="b-road inline-block py-0 px-2 rounded-sm">B' + route + '</p>';
+        break;
       case 5:
-        return '<p class="c-road inline-block py-0 px-2 rounded-sm">C' + route + '</p>';
+        html = '<p class="c-road inline-block py-0 px-2 rounded-sm">C' + route + '</p>';
+        break;
       case 6:
-        return '<p class="unclassified inline-block py-0 px-2 rounded-sm text-white bg-black">Unclassified</p>';
+        html = '<p class="unclassified inline-block py-0 px-2 rounded-sm text-white bg-black">Unclassified</p>';
+        break;
       default:
-        return '<p class="data-missing inline-block py-0 px-2 rounded-sm text-white bg-black">Data missing or out of range</p>';
+        html = '<p class="data-missing inline-block py-0 px-2 rounded-sm text-white bg-black">Data missing or out of range</p>';
     }
+    return html;
   };

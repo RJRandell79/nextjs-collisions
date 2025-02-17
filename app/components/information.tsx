@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Record } from '@/app/lib/definitions';
-import { roadClass } from '@/app/lib/utils';
+import { roadClassHTML } from '@/app/lib/utils';
 import getSeverity from '@/app/lib/severity';
 import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { FaKitMedical, FaCarBurst } from 'react-icons/fa6';
@@ -22,7 +22,7 @@ const MoreInfoSection = ({ collisionDetails } : { collisionDetails: Record | nul
     <div className="more-info px-4 pt-4 pb-2 bg-white rounded-lg shadow-md">
       <h2 className="text-xl font-bold mb-4">Details</h2>
       <div className="flex items-center mb-3">
-        <div className="mr-1" dangerouslySetInnerHTML={{ __html: roadClass(Number(collisionDetails.first_road_class), Number(collisionDetails.first_road_number))}}></div>
+        <div className="mr-1" dangerouslySetInnerHTML={{ __html: roadClassHTML(Number(collisionDetails.first_road_class), Number(collisionDetails.first_road_number))}}></div>
         <div className="mr-1" dangerouslySetInnerHTML={{ __html: getSeverity(Number(collisionDetails.legacy_collision_severity))}}></div>
       </div>
       <div className="flex items-center justify-between">
