@@ -92,3 +92,8 @@ export type CollisionsByRouteEntry = {
     local_authority_ons_district: string;
     count: number;
 }
+
+export type OnsDistrictsEntry = {
+    code: string;
+    area: string;
+}

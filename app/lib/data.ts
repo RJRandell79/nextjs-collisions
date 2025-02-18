@@ -1,6 +1,6 @@
 'use server';
 
-import { Record, SeverityDateEntry, SeverityTimeEntry, CollisionsByRouteEntry } from './definitions';
+import { Record, SeverityDateEntry, SeverityTimeEntry, CollisionsByRouteEntry, OnsDistrictsEntry } from './definitions';
 import { format } from 'date-fns';
 import postgres from 'postgres';
 
@@ -18,6 +18,17 @@ export async function fetchCollisions() {
         const data = await sql<[Record]>`SELECT collisions.collision_reference, collisions.latitude, collisions.longitude, collisions.time_recorded, collisions.date_recorded, collisions.number_of_vehicles, collisions.first_road_class, collisions.first_road_number, collisions.legacy_collision_severity, collisions.number_of_casualties FROM collisions`;
         return data;
     } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch data.');
+    }
+}
+
+export async function fetchAllOnsDistricts() {
+    try {
+        const data = await sql<OnsDistrictsEntry[]>`SELECT DISTINCT code, area FROM ons_districts ORDER BY area ASC`;
+        return data;
+    }
+    catch (error) {
         console.error('Database Error:', error);
         throw new Error('Failed to fetch data.');
     }
