@@ -25,7 +25,7 @@ export async function fetchCollisions() {
 
 export async function fetchAllOnsDistricts() {
     try {
-        const data = await sql<OnsDistrictsEntry[]>`SELECT DISTINCT code, area FROM ons_districts ORDER BY area ASC`;
+        const data = await sql<OnsDistrictsEntry[]>`SELECT DISTINCT od.code, od.area FROM ons_districts od JOIN collisions c ON od.code = c.local_authority_ons_district ORDER BY od.area ASC`;
         return data;
     }
     catch (error) {
@@ -54,7 +54,7 @@ export async function countAllCollisions() {
     }
 }
 
-export async function fetchCollisionsTotalPages() {
+export async function fetchCollisionsTotalPages(selectedDistrict?: string) {
     try {
         const data = await sql<{ count: number }[]>
                 `SELECT 
@@ -66,6 +66,7 @@ export async function fetchCollisionsTotalPages() {
                 FROM collisions c
                 WHERE c.first_road_class IN (1, 2, 3, 4, 5) 
                   AND (c.first_road_number IS NOT NULL AND c.first_road_number != 0)
+                ${selectedDistrict ? sql`AND c.local_authority_ons_district = ${selectedDistrict}` : sql``}
                 GROUP BY c.first_road_class, c.first_road_number, c.police_force, c.local_authority_ons_district`;
         const totalCollisions = data.count;
         return Math.ceil(totalCollisions / collisionsPerPage);
@@ -75,7 +76,7 @@ export async function fetchCollisionsTotalPages() {
     }
 }
 
-export async function fetchCollisionsByRoute( currentPage: number ) {
+export async function fetchCollisionsByRoute(currentPage: number, selectedDistrict?: string) {
     const offset = (currentPage - 1) * collisionsPerPage;
     try {
         const data = await sql<CollisionsByRouteEntry[]>`
@@ -89,6 +90,7 @@ export async function fetchCollisionsByRoute( currentPage: number ) {
                 FROM collisions c
                 WHERE c.first_road_class IN (1, 2, 3, 4, 5) 
                   AND (c.first_road_number IS NOT NULL AND c.first_road_number != 0)
+                  ${selectedDistrict ? sql`AND c.local_authority_ons_district = ${selectedDistrict}` : sql``}
                 GROUP BY c.first_road_class, c.first_road_number, c.police_force, c.local_authority_ons_district
             )
             SELECT 

@@ -1,10 +1,15 @@
+'use client';
+
 import Link from 'next/link';
-import { SelectControlledInput } from '../ui/dashboard/input-select';
+import { SelectOnsDistrictsInput } from '../ui/dashboard/input-ons-district-select';
 import { CollisionByRouteTable } from '../ui/dashboard/collisions-routes';
 import { MapSkeleton } from '../ui/skeletons';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
+import { OnsDistrictsEntry } from '@/app/lib/definitions';
 
 export default function Route() {
+    const [selectedDistrict, setSelectedDistrict] = useState<OnsDistrictsEntry | null>(null);
+
     return (
       <div className="mx-auto max-w-screen-2xl">
         <nav className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
@@ -51,11 +56,11 @@ export default function Route() {
               <section aria-labelledby="">
                 <h1 id="current-billing-cycle" className="scroll-mt-10 text-lg font-semibold text-gray-900 sm:text-xl dark:text-gray-50">Most Collisions By Route</h1>
                 <div className="sticky top-16 z-20 flex items-center justify-between border-b border-gray-200 bg-white pb-4 pt-4 sm:pt-6 lg:top-0 lg:mx-0 lg:px-0 lg:pt-8 dark:border-gray-800 dark:bg-gray-950">
-                    <SelectControlledInput />
+                    <SelectOnsDistrictsInput onSelect={setSelectedDistrict} />
                 </div>
                 <div className="mt-10">
                   <Suspense fallback={<MapSkeleton />}>
-                    <CollisionByRouteTable />
+                    <CollisionByRouteTable selectedDistrict={selectedDistrict} />
                   </Suspense>
                 </div>
               </section>

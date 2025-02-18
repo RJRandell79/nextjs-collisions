@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Pagination from '@/app/ui/dashboard/pagination';
 import { fetchCollisionsTotalPages, fetchCollisionsByRoute } from "@/app/lib/data";
 import { positioningByPage, roadClassPrefixNo } from "@/app/lib/utils";
-import { CollisionsByRouteEntry } from "@/app/lib/definitions";
+import { CollisionsByRouteEntry, CollisionsByRouteTableProps } from "@/app/lib/definitions";
 import { MapSkeleton } from "../skeletons";
 
 import {
@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/app/lib/charts/table"
 
-export const CollisionByRouteTable = () => {
+export const CollisionByRouteTable = ({ selectedDistrict }: CollisionsByRouteTableProps) => {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<CollisionsByRouteEntry[]>([]);
     const [totalPages, setTotalPages] = useState(1);
@@ -29,8 +29,8 @@ export const CollisionByRouteTable = () => {
         const fetchData = async () => {
             try {
               setLoading(true);
-              const totalPagesResponse = await fetchCollisionsTotalPages();
-              const response = await fetchCollisionsByRoute(currentPage);
+              const totalPagesResponse = await fetchCollisionsTotalPages(selectedDistrict?.code);
+              const response = await fetchCollisionsByRoute(currentPage, selectedDistrict?.code);
               setData(response as CollisionsByRouteEntry[]);
               setTotalPages(totalPagesResponse);
             } catch (error) {
@@ -40,7 +40,7 @@ export const CollisionByRouteTable = () => {
             }
         };
         fetchData();
-        }, [currentPage]);
+        }, [currentPage, selectedDistrict]);
 
     if(loading) {
         return <MapSkeleton />

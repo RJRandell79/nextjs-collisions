@@ -75,6 +75,14 @@ export interface SeverityProperties {
     legacy_collision_severity: number;
 }
 
+export interface CollisionsByRouteTableProps {
+    selectedDistrict: OnsDistrictsEntry | null;
+}
+
+export interface SelectOnsDistrictInputProps {
+    onSelect: (selectedItem: OnsDistrictsEntry | null) => void;
+}
+
 export type SeverityDateEntry = {
     date: string;
     [key: string]: number | string | undefined;

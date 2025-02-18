@@ -10,10 +10,10 @@ import {
   SelectValue,
 } from "@/app/components/select"
 import { MapSkeleton } from "../skeletons"
-import { OnsDistrictsEntry } from "@/app/lib/definitions"
+import { OnsDistrictsEntry, SelectOnsDistrictInputProps } from "@/app/lib/definitions";
 import { fetchAllOnsDistricts } from "@/app/lib/data";
 
-export function SelectControlledInput() {
+export function SelectOnsDistrictsInput({ onSelect }: SelectOnsDistrictInputProps) {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<OnsDistrictsEntry[]>([]);
   const [selectedItem, setSelectedItem] = useState<OnsDistrictsEntry | null>(null);
@@ -32,6 +32,10 @@ export function SelectControlledInput() {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    onSelect(selectedItem);
+  }, [selectedItem, onSelect]);
   
   if(loading) {
       return <MapSkeleton />
@@ -45,7 +49,7 @@ export function SelectControlledInput() {
           setSelectedItem(item || null);
         }}>
           <SelectTrigger className="mx-auto h-10">
-            <SelectValue placeholder="Select" aria-label={selectedItem?.area} />
+            <SelectValue placeholder="Select" aria-label={selectedItem?.area || ""} />
           </SelectTrigger>
           <SelectContent>
             {data.map((item) => (
