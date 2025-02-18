@@ -6,6 +6,7 @@ import postgres from 'postgres';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
+const collisionsPerPage = 150;
 const severityMapping: { [key: number]: string } = {
     1: 'Fatal',
     2: 'Serious',
@@ -42,7 +43,29 @@ export async function countAllCollisions() {
     }
 }
 
-export async function fetchCollisionsByRoute() {
+export async function fetchCollisionsTotalPages() {
+    try {
+        const data = await sql<{ count: number }[]>
+                `SELECT 
+                    c.first_road_class, 
+                    c.first_road_number, 
+                    c.police_force, 
+                    c.local_authority_ons_district,
+                    COUNT(*) AS count
+                FROM collisions c
+                WHERE c.first_road_class IN (1, 2, 3, 4, 5) 
+                  AND (c.first_road_number IS NOT NULL AND c.first_road_number != 0)
+                GROUP BY c.first_road_class, c.first_road_number, c.police_force, c.local_authority_ons_district`;
+        const totalCollisions = data.count;
+        return Math.ceil(totalCollisions / collisionsPerPage);
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch data.');
+    }
+}
+
+export async function fetchCollisionsByRoute( currentPage: number ) {
+    const offset = (currentPage - 1) * collisionsPerPage;
     try {
         const data = await sql<CollisionsByRouteEntry[]>`
             WITH collision_data AS (
@@ -67,6 +90,8 @@ export async function fetchCollisionsByRoute() {
             JOIN police_forces pf ON cd.police_force = pf.code
             JOIN ons_districts od ON cd.local_authority_ons_district = od.code
             ORDER BY cd.count DESC
+            LIMIT ${collisionsPerPage}
+            OFFSET ${offset}
         `;
         return data;
     }

@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchCollisionsByRoute } from "@/app/lib/data";
-import { roadClassPrefixNo } from "@/app/lib/utils";
+import { useSearchParams } from 'next/navigation';
+import Pagination from '@/app/ui/dashboard/pagination';
+import { fetchCollisionsTotalPages, fetchCollisionsByRoute } from "@/app/lib/data";
+import { positioningByPage, roadClassPrefixNo } from "@/app/lib/utils";
 import { CollisionsByRouteEntry } from "@/app/lib/definitions";
 import { MapSkeleton } from "../skeletons";
 
@@ -19,21 +21,26 @@ import {
 export const CollisionByRouteTable = () => {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<CollisionsByRouteEntry[]>([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const searchParams = useSearchParams();
+    const currentPage = Number(searchParams.get('page')) || 1;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-            const response = await fetchCollisionsByRoute();
-            console.log(response);
-            setData(response as CollisionsByRouteEntry[]);
+              setLoading(true);
+              const totalPagesResponse = await fetchCollisionsTotalPages();
+              const response = await fetchCollisionsByRoute(currentPage);
+              setData(response as CollisionsByRouteEntry[]);
+              setTotalPages(totalPagesResponse);
             } catch (error) {
-                console.error('Error fetching data:', error);
+              console.error('Error fetching data:', error);
             } finally {
-                setLoading(false);
+              setLoading(false);
             }
         };
         fetchData();
-        }, []);
+        }, [currentPage]);
 
     if(loading) {
         return <MapSkeleton />
@@ -59,7 +66,7 @@ export const CollisionByRouteTable = () => {
           <TableBody>
             {data.map((item, index) => (
               <TableRow key={index}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell>{positioningByPage(currentPage, index)}</TableCell>
                 <TableCell >{roadClassPrefixNo(item.first_road_class, item.first_road_number)}</TableCell>
                 <TableCell>{item.police_force}</TableCell>
                 <TableCell>{item.local_authority_ons_district}</TableCell>
@@ -69,6 +76,9 @@ export const CollisionByRouteTable = () => {
           </TableBody>
         </Table>
       </TableRoot>
+      <div className="mt-5 flex w-full justify-center">
+        <Pagination totalPages={totalPages} />
+      </div>
     </>
   )
 }
